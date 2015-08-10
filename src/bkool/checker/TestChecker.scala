@@ -5,7 +5,7 @@ import java.io.{FileInputStream,PrintWriter}
 
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream,ParserRuleContext}
 import org.antlr.v4.runtime.tree.{ParseTreeWalker,TerminalNode,ErrorNode,ParseTree};
-
+import scala.collection.JavaConverters._
 import bkool.parser._
 
 
@@ -27,4 +27,16 @@ object TestChecker {
 	
 }
 
-class StaticChecker extends BKOOLBaseVisitor[Object] {}
+trait BKOOLType
+case object IntType extends BKOOLType
+case object FloatType extends BKOOLType
+case class MethodType (partype:List[BKOOLType],retyype:BKOOLType) extends BKOOLType
+case class JointType (typlst:List[BKOOLType]) extends BKOOLType
+class StaticChecker extends BKOOLBaseVisitor[Object] {
+  override def visitProgram(ctx:BKOOLParser.ProgramContext) =
+      ctx.classDeclaration().asScala.map(visit).toList.asInstanceOf[List[List[(String,BKOOLType)]]].flatten
+  override def visitClass_decl(ctx:BKOOLParser.ClassDeclarationContext) = {
+    val name = ctx.Identifier().asScala.map(visit).toList.asInstanceOf[List[List[(String)]]].flatten;
+  }
+    
+}
