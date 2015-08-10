@@ -1,0 +1,16 @@
+Error on line 1 col 1
+Error on line 1 col 2
+Error on line 1 col 3
+Error on line 1 col 4
+Error on line 1 col 5
+Error on line 1 col 7
+Error on line 1 col 9
+Error on line 1 col 10
+Error on line 1 col 11
+Error on line 1 col 12
+Error on line 1 col 13
+Error on line 1 col 14
+Error on line 1 col 15
+Error on line 1 col 17
+Error on line 1 col 19
+<EOF>
