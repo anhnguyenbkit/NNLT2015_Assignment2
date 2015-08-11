@@ -40,6 +40,7 @@ object Main extends Timed{
     //val opt = args(4) //tuy chon che do chay
     val option = args(0).drop(1)
     val sepa = "//" // dung cho linux
+    println("outdir: "+outdir)
       //chay tat ca testcase mot luc
     for (i <- start to end) {
       //khong in ra phan nay
