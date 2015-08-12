@@ -8,7 +8,7 @@ package bkool.parser
 import org.antlr.v4.runtime.Token
 import java.io.{PrintWriter,File}
 import org.antlr.v4.runtime.ANTLRFileStream
-import bkool.parser.ProcessError
+//import bkool.parser.ProcessError
 
 object TestLexer extends ProcessError {
   

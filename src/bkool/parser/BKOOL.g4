@@ -1,311 +1,71 @@
-/*
- * student ID: 1570007
- */
-
 grammar BKOOL;
 
 @lexer::header{
-//	package bkool.parser;
+//package bkool.parser;
 }
 
 @parser::header{
-//	package bkool.parser;
+//package bkool.parser;
 }
 
 options{
-	language=Java;
+language=Java;
 }
 
-program: classDeclaration+ EOF ;
+program: decl+ EOF;
 
-// student for recognizer start from here
-variableModifier
-	:	'static'
-	;
-classDeclaration: 'class' Identifier
-					('extends' Identifier)? 
-					classBody
-					;
-classBody: '{' classBodyDeclaration* '}'
-			;
-classBodyDeclaration
-	:  memberDeclartion
-	;
+decl: CLASS IDENTIFIER '{' '}' ;
 
-memberDeclartion
-	: methodDeclaration
-	| localVariableDeclarationStatement
-	| constantDeclarationStatement 
-	| constructorDeclaration
-	;
+var_decl: mctype idlist ;
 
-methodDeclaration
-	:	(type | 'void') 'static'? Identifier formalParameters	
-		( 	methodBody
-		|	';'
-		)
-	;
-constructorDeclaration
-    :   Identifier formalParameters
-        constructorBody
-    ;
-constructorBody
-    :   block
-    ;
-formalParameters
-	:	'(' formalParameterList? ')'
-	;
-formalParameterList
-	:	formalParameter	(';' formalParameter)*
-	;
-formalParameter
-	:	variableDeclarators ':' type
-	;
-variableDeclarators
-	:	variableDeclaratorId (',' variableDeclaratorId)*
-	;
-variableDeclaratorId
-	: Identifier
-	;
+var_dl: var_decl SEMI;
 
-type
-	: 	primitiveType 
-	| 	classType 
-	|	arrayType
-	;
-arrayType
-	:	(classType | primitiveType) '['IntegerLiteral']'
-	;
-classType
-    :   Identifier
-    ;
-primitiveType
-	:	'bool'
-	|	'float'
-	|	'integer'
-	|	'string'
-	;	
-methodBody
-	: block
-	;
-// STATEMENTS / BLOCKS
-block
-	: '{' blockStatement* '}'
-	;
-blockStatement
-	:	localVariableDeclarationStatement
-	| 	statement
-	|	constantDeclarationStatement 
-	;
-localVariableDeclarationStatement
-	:	localVariableDeclaration ';'
-	;
-	
-localVariableDeclaration
-	:	variableModifier? variableDeclarators ':' type
-	;
-constantDeclarationStatement
-	:	constantDeclaration ';'
-	;
-constantDeclaration
-	:	'static'? 'final' type Identifier '=' expression
-	;
-statement
-	: 	'if' expression 'then' statement ('else' statement)?
-	| 	'while' expression 'do' statement
-	|	'break' ';'
-	|	'continue' ';'
-	|	'return' expression? ';'
-	|	statemenExpression ';'
-	;
-statemenExpression
-	: 	expression
-	;
-expressionList
-	: 	expression (',' expression)*
-	;
-expression
-	:	primary
-	|	expression '.' Identifier
-	|	expression '.' Identifier '(' expressionList? ')'
-	|	'self' '.' expression
-	| 	expression '[' expression ']'
-	|	'new' creator
-	|	expression ('+'|'-')
-	| 	expression '!'
-	|	expression '^' expression
-	|	expression ('*'|'/'|'\\'|'%') expression
-	|	expression ('+'|'-') expression
-	|	expression ('&&'|'||') expression
-	|	expression ('=='|'<>') expression
-	|	expression ('<'|'>'|'<='|'>=') expression
-	|	<assoc=right> expression
-		':='
-		expression
-	;
-primary
-    :   '(' expression ')'
-    |   'self'
-    |   literal
-    |   Identifier
-    ;
-literal
-    :   IntegerLiteral
-    |   FloatingPointLiteral
-    |   StringLiteral
-    |   BooleanLiteral
-    | 	NULL
-    ;
-creator
-	: Identifier arguments
-	;
-arguments
-	:	'(' expressionList? ')'
-	;
+idlist: IDENTIFIER (COMMA IDENTIFIER)* ;
 
-// student for Lexer start from here
-//Keywords
-BOOL	:	'bool';
-BREAK	:	'break';
-CLASS	:	'class';
-CONTINUE:	'continue';
-DO		:	'do';
-ELSE	:	'else';
-EXTENDS	:	'extends';
-FLOAT	:	'float';
-IF		:	'if';
-INTEGER	:	'integer';
-NEW		:	'new';
-STRING	:	'string';
-THEN	:	'then';
-WHILE	:	'while';
-RETURN	:	'return';
-TRUE	:	'true';
-FALSE	:	'false';
-VOID	:	'void';
-NULL	:	'null';
-SELF	:	'self';
-FINAL	:	'final';
-STATIC	:	'static';
+func_decl: mctype IDENTIFIER LBRAC parlist? RBRAC body ;
 
-//Integer Literals
-IntegerLiteral
-	: DecimalIntegerLiteral
-	;
-fragment
-DecimalIntegerLiteral
-	:	DecimalNumeral
-	;
-fragment
-DecimalNumeral
-	: '0'
-	| NonZeroDigit Digits?
-	;
-fragment
-Digits
-	:	Digit Digit*
-	;
-fragment
-Digit
-	:	'0'
-	| NonZeroDigit
-	;
-fragment
-NonZeroDigit
-	:	[1-9]
-	;
-//Floating-Point Literals
-FloatingPointLiteral
-	:	DecimalFloatingPointLiteral
-	;
-fragment
-DecimalFloatingPointLiteral
-	:	Digits '.' Digits ExponentPart?
-	|	Digits ExponentPart
-	|	Digits '.' Digits?
-	;
-fragment
-ExponentPart
-	:	ExponentIndicator SignedInteger
-	;
-fragment
-ExponentIndicator
-	:	[eE]
-	;
-fragment
-SignedInteger
-	:	Sign? Digits
-	;
-fragment
-Sign
-	:	[+-]
-	;
-//Boolean Literals
-BooleanLiteral
-	:	'true'
-	|	'false'
-	;
-//String Literals
-StringLiteral
-	: '"' StringCharacters? '"'
-	;
-fragment
-StringCharacters
-	: StringCharacter+
-	;
-fragment
-StringCharacter
-	: 	~["\\]
-	|	EscapseSequence
-	;
-fragment
-EscapseSequence
-	:	'\\' [btnfr"\\]
-	;
-//The Null Literal
-NullLiteral
-	: 'null'
-	;
-	
-//Separators
-LPAREN		: '(';
-RPAREN		: ')';
-LBRACE		: '{';
-RBRACE		: '}';
-LBRACK		: '[';
-RBRACK		: ']';
-SEMI		: ';';
-COLON		: ':';
-COMMA		: ',';
-DOT			: '.';
+mctype: INTTYPE | FLOATTYPE ;
 
+parlist: var_decl (SEMI var_decl)* ;
 
-//Operators
-ASSIGN		: ':=';
-CONSTANTDECLARATION: '=';
-GT			: '>';
-LT			: '<';
-BANG		: '!';
-EQUAL		: '++';
-LE			: '<=';
-GE			: '>=';
-NOTEQUAL	: '<>';
-AND			: '&&';
-OR			: '||';
-INC_OR_ADD	: '+';
-DEC_OR_SUB	: '-';
-MUL			: '*';
-FLOATDIV	: '/';
-INTDIV 		: '\\';
-CARET		: '^';
-MOD			: '%';
-Identifier  : [a-zA-Z_][a-zA-Z0-9_]*
-			;
-// Whitespace and comments
-WS	: [ \t\r\f\n]+ -> skip;
-COMMENT: '(*' .*? '*)' -> skip;
-LINE_COMMENT
-	:	'#' ~[\r\n]* -> skip
-	;
-	
-UNCLOSE_STRING: '\"'  {System.out.print("There is an unclosed string.");};
+body: LPAREN mem* RPAREN ;
+
+mem: var_dl | stmt ;
+
+stmt: assign | call ;
+
+assign: IDENTIFIER ASSIGN exp SEMI ;
+
+call: IDENTIFIER LBRAC explist? RBRAC SEMI ;
+
+explist: exp (COMMA exp)* ;
+
+exp: term moreterm* ;
+
+moreterm: (ADD | SUB) term;
+
+term: fact morefact*;
+
+morefact: (MUL | DIV) fact;
+
+fact: IDENTIFIER (LBRAC explist? RBRAC)? | INTLIT  | FLOATLIT | LBRAC exp RBRAC ;
+
+SEMI: ';';
+ASSIGN: '=';
+COMMA: ',';
+LBRAC: '(';
+RBRAC: ')';
+LPAREN: '{';
+RPAREN: '}';
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+INTTYPE: 'int';
+FLOATTYPE: 'float';
+FLOATLIT: [0-9]+'.'[0-9]+;
+INTLIT: [0-9]+;
+IDENTIFIER: [a-z]+;
+CLASS: 'class';
+WS: [ \t\r\n] -> skip;
+

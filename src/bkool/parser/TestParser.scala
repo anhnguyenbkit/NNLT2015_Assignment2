@@ -3,7 +3,7 @@ package bkool.parser
 import java.io.{PrintWriter,File}
 import org.antlr.v4.runtime.ANTLRFileStream
 import org.antlr.v4.runtime.CommonTokenStream
-import bkool.parser.ProcessError
+//import bkool.parser.ProcessError
 
 
 

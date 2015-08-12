@@ -1,7 +1,7 @@
 // Generated from BKOOL.g4 by ANTLR 4.4
 package bkool.parser;
 
-//	package bkool.parser;
+//package bkool.parser;
 
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -20,37 +20,133 @@ public class BKOOLBaseListener implements BKOOLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMemberDeclartion(@NotNull BKOOLParser.MemberDeclartionContext ctx) { }
+	@Override public void enterBody(@NotNull BKOOLParser.BodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMemberDeclartion(@NotNull BKOOLParser.MemberDeclartionContext ctx) { }
+	@Override public void exitBody(@NotNull BKOOLParser.BodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodDeclaration(@NotNull BKOOLParser.MethodDeclarationContext ctx) { }
+	@Override public void enterCall(@NotNull BKOOLParser.CallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodDeclaration(@NotNull BKOOLParser.MethodDeclarationContext ctx) { }
+	@Override public void exitCall(@NotNull BKOOLParser.CallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodBody(@NotNull BKOOLParser.MethodBodyContext ctx) { }
+	@Override public void enterAssign(@NotNull BKOOLParser.AssignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodBody(@NotNull BKOOLParser.MethodBodyContext ctx) { }
+	@Override public void exitAssign(@NotNull BKOOLParser.AssignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStmt(@NotNull BKOOLParser.StmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStmt(@NotNull BKOOLParser.StmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVar_decl(@NotNull BKOOLParser.Var_declContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVar_decl(@NotNull BKOOLParser.Var_declContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMoreterm(@NotNull BKOOLParser.MoretermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMoreterm(@NotNull BKOOLParser.MoretermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVar_dl(@NotNull BKOOLParser.Var_dlContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVar_dl(@NotNull BKOOLParser.Var_dlContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExp(@NotNull BKOOLParser.ExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExp(@NotNull BKOOLParser.ExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFact(@NotNull BKOOLParser.FactContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFact(@NotNull BKOOLParser.FactContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunc_decl(@NotNull BKOOLParser.Func_declContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunc_decl(@NotNull BKOOLParser.Func_declContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTerm(@NotNull BKOOLParser.TermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTerm(@NotNull BKOOLParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -68,349 +164,85 @@ public class BKOOLBaseListener implements BKOOLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterType(@NotNull BKOOLParser.TypeContext ctx) { }
+	@Override public void enterParlist(@NotNull BKOOLParser.ParlistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitType(@NotNull BKOOLParser.TypeContext ctx) { }
+	@Override public void exitParlist(@NotNull BKOOLParser.ParlistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstructorBody(@NotNull BKOOLParser.ConstructorBodyContext ctx) { }
+	@Override public void enterMem(@NotNull BKOOLParser.MemContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstructorBody(@NotNull BKOOLParser.ConstructorBodyContext ctx) { }
+	@Override public void exitMem(@NotNull BKOOLParser.MemContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassDeclaration(@NotNull BKOOLParser.ClassDeclarationContext ctx) { }
+	@Override public void enterMorefact(@NotNull BKOOLParser.MorefactContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitClassDeclaration(@NotNull BKOOLParser.ClassDeclarationContext ctx) { }
+	@Override public void exitMorefact(@NotNull BKOOLParser.MorefactContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteral(@NotNull BKOOLParser.LiteralContext ctx) { }
+	@Override public void enterIdlist(@NotNull BKOOLParser.IdlistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteral(@NotNull BKOOLParser.LiteralContext ctx) { }
+	@Override public void exitIdlist(@NotNull BKOOLParser.IdlistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableModifier(@NotNull BKOOLParser.VariableModifierContext ctx) { }
+	@Override public void enterMctype(@NotNull BKOOLParser.MctypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariableModifier(@NotNull BKOOLParser.VariableModifierContext ctx) { }
+	@Override public void exitMctype(@NotNull BKOOLParser.MctypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassBodyDeclaration(@NotNull BKOOLParser.ClassBodyDeclarationContext ctx) { }
+	@Override public void enterExplist(@NotNull BKOOLParser.ExplistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitClassBodyDeclaration(@NotNull BKOOLParser.ClassBodyDeclarationContext ctx) { }
+	@Override public void exitExplist(@NotNull BKOOLParser.ExplistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatement(@NotNull BKOOLParser.StatementContext ctx) { }
+	@Override public void enterDecl(@NotNull BKOOLParser.DeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatement(@NotNull BKOOLParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterClassBody(@NotNull BKOOLParser.ClassBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassBody(@NotNull BKOOLParser.ClassBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConstantDeclarationStatement(@NotNull BKOOLParser.ConstantDeclarationStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConstantDeclarationStatement(@NotNull BKOOLParser.ConstantDeclarationStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBlock(@NotNull BKOOLParser.BlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBlock(@NotNull BKOOLParser.BlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFormalParameter(@NotNull BKOOLParser.FormalParameterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFormalParameter(@NotNull BKOOLParser.FormalParameterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPrimitiveType(@NotNull BKOOLParser.PrimitiveTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPrimitiveType(@NotNull BKOOLParser.PrimitiveTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConstantDeclaration(@NotNull BKOOLParser.ConstantDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConstantDeclaration(@NotNull BKOOLParser.ConstantDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArrayType(@NotNull BKOOLParser.ArrayTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayType(@NotNull BKOOLParser.ArrayTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLocalVariableDeclarationStatement(@NotNull BKOOLParser.LocalVariableDeclarationStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLocalVariableDeclarationStatement(@NotNull BKOOLParser.LocalVariableDeclarationStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCreator(@NotNull BKOOLParser.CreatorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCreator(@NotNull BKOOLParser.CreatorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBlockStatement(@NotNull BKOOLParser.BlockStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBlockStatement(@NotNull BKOOLParser.BlockStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExpression(@NotNull BKOOLParser.ExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpression(@NotNull BKOOLParser.ExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConstructorDeclaration(@NotNull BKOOLParser.ConstructorDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConstructorDeclaration(@NotNull BKOOLParser.ConstructorDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFormalParameterList(@NotNull BKOOLParser.FormalParameterListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFormalParameterList(@NotNull BKOOLParser.FormalParameterListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLocalVariableDeclaration(@NotNull BKOOLParser.LocalVariableDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLocalVariableDeclaration(@NotNull BKOOLParser.LocalVariableDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExpressionList(@NotNull BKOOLParser.ExpressionListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpressionList(@NotNull BKOOLParser.ExpressionListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVariableDeclarators(@NotNull BKOOLParser.VariableDeclaratorsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariableDeclarators(@NotNull BKOOLParser.VariableDeclaratorsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatemenExpression(@NotNull BKOOLParser.StatemenExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatemenExpression(@NotNull BKOOLParser.StatemenExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFormalParameters(@NotNull BKOOLParser.FormalParametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFormalParameters(@NotNull BKOOLParser.FormalParametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArguments(@NotNull BKOOLParser.ArgumentsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArguments(@NotNull BKOOLParser.ArgumentsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVariableDeclaratorId(@NotNull BKOOLParser.VariableDeclaratorIdContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariableDeclaratorId(@NotNull BKOOLParser.VariableDeclaratorIdContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterClassType(@NotNull BKOOLParser.ClassTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassType(@NotNull BKOOLParser.ClassTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPrimary(@NotNull BKOOLParser.PrimaryContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPrimary(@NotNull BKOOLParser.PrimaryContext ctx) { }
+	@Override public void exitDecl(@NotNull BKOOLParser.DeclContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

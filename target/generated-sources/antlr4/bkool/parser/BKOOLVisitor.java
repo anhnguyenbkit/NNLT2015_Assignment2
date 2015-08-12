@@ -1,7 +1,7 @@
 // Generated from BKOOL.g4 by ANTLR 4.4
 package bkool.parser;
 
-//	package bkool.parser;
+//package bkool.parser;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -15,23 +15,71 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface BKOOLVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#memberDeclartion}.
+	 * Visit a parse tree produced by {@link BKOOLParser#body}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMemberDeclartion(@NotNull BKOOLParser.MemberDeclartionContext ctx);
+	T visitBody(@NotNull BKOOLParser.BodyContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#methodDeclaration}.
+	 * Visit a parse tree produced by {@link BKOOLParser#call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMethodDeclaration(@NotNull BKOOLParser.MethodDeclarationContext ctx);
+	T visitCall(@NotNull BKOOLParser.CallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#methodBody}.
+	 * Visit a parse tree produced by {@link BKOOLParser#assign}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMethodBody(@NotNull BKOOLParser.MethodBodyContext ctx);
+	T visitAssign(@NotNull BKOOLParser.AssignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmt(@NotNull BKOOLParser.StmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#var_decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVar_decl(@NotNull BKOOLParser.Var_declContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#moreterm}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMoreterm(@NotNull BKOOLParser.MoretermContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#var_dl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVar_dl(@NotNull BKOOLParser.Var_dlContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExp(@NotNull BKOOLParser.ExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#fact}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFact(@NotNull BKOOLParser.FactContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#func_decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunc_decl(@NotNull BKOOLParser.Func_declContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BKOOLParser#term}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerm(@NotNull BKOOLParser.TermContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BKOOLParser#program}.
 	 * @param ctx the parse tree
@@ -39,177 +87,45 @@ public interface BKOOLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(@NotNull BKOOLParser.ProgramContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#type}.
+	 * Visit a parse tree produced by {@link BKOOLParser#parlist}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitType(@NotNull BKOOLParser.TypeContext ctx);
+	T visitParlist(@NotNull BKOOLParser.ParlistContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#constructorBody}.
+	 * Visit a parse tree produced by {@link BKOOLParser#mem}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstructorBody(@NotNull BKOOLParser.ConstructorBodyContext ctx);
+	T visitMem(@NotNull BKOOLParser.MemContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#classDeclaration}.
+	 * Visit a parse tree produced by {@link BKOOLParser#morefact}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitClassDeclaration(@NotNull BKOOLParser.ClassDeclarationContext ctx);
+	T visitMorefact(@NotNull BKOOLParser.MorefactContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#literal}.
+	 * Visit a parse tree produced by {@link BKOOLParser#idlist}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteral(@NotNull BKOOLParser.LiteralContext ctx);
+	T visitIdlist(@NotNull BKOOLParser.IdlistContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#variableModifier}.
+	 * Visit a parse tree produced by {@link BKOOLParser#mctype}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariableModifier(@NotNull BKOOLParser.VariableModifierContext ctx);
+	T visitMctype(@NotNull BKOOLParser.MctypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#classBodyDeclaration}.
+	 * Visit a parse tree produced by {@link BKOOLParser#explist}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitClassBodyDeclaration(@NotNull BKOOLParser.ClassBodyDeclarationContext ctx);
+	T visitExplist(@NotNull BKOOLParser.ExplistContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#statement}.
+	 * Visit a parse tree produced by {@link BKOOLParser#decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(@NotNull BKOOLParser.StatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#classBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassBody(@NotNull BKOOLParser.ClassBodyContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#constantDeclarationStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConstantDeclarationStatement(@NotNull BKOOLParser.ConstantDeclarationStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#block}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlock(@NotNull BKOOLParser.BlockContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#formalParameter}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFormalParameter(@NotNull BKOOLParser.FormalParameterContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#primitiveType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveType(@NotNull BKOOLParser.PrimitiveTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#constantDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConstantDeclaration(@NotNull BKOOLParser.ConstantDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#arrayType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayType(@NotNull BKOOLParser.ArrayTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#localVariableDeclarationStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLocalVariableDeclarationStatement(@NotNull BKOOLParser.LocalVariableDeclarationStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#creator}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCreator(@NotNull BKOOLParser.CreatorContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#blockStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlockStatement(@NotNull BKOOLParser.BlockStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpression(@NotNull BKOOLParser.ExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#constructorDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConstructorDeclaration(@NotNull BKOOLParser.ConstructorDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#formalParameterList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFormalParameterList(@NotNull BKOOLParser.FormalParameterListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#localVariableDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLocalVariableDeclaration(@NotNull BKOOLParser.LocalVariableDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#expressionList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionList(@NotNull BKOOLParser.ExpressionListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#variableDeclarators}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableDeclarators(@NotNull BKOOLParser.VariableDeclaratorsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#statemenExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatemenExpression(@NotNull BKOOLParser.StatemenExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#formalParameters}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFormalParameters(@NotNull BKOOLParser.FormalParametersContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#arguments}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArguments(@NotNull BKOOLParser.ArgumentsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#variableDeclaratorId}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableDeclaratorId(@NotNull BKOOLParser.VariableDeclaratorIdContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#classType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassType(@NotNull BKOOLParser.ClassTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BKOOLParser#primary}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimary(@NotNull BKOOLParser.PrimaryContext ctx);
+	T visitDecl(@NotNull BKOOLParser.DeclContext ctx);
 }

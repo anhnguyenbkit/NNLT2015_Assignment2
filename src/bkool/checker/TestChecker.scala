@@ -1,125 +1,212 @@
 package bkool.checker
 
-import scala.collection.JavaConversions._
-import java.io.{FileInputStream,PrintWriter}
-import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream,ParserRuleContext}
-import org.antlr.v4.runtime.tree.{ParseTreeWalker,TerminalNode,ErrorNode,ParseTree}
-import scala.collection.JavaConverters._
+/**
+ * @author nhphung
+ */
+
+
 import bkool.parser._
-import bkool.parser.BKOOLParser.PrimitiveTypeContext
-import bkool.parser.BKOOLParser.FormalParameterListContext
-import bkool.parser.BKOOLParser.FormalParameterContext
-import java.awt.geom.FlatteningPathIterator
-
-
+import java.io.{PrintWriter,File}
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree._
+import scala.collection.JavaConverters._
 
 object TestChecker {
-
-	// please don't change Name of this class and name, parameter of this function
-	def test(input:ANTLRInputStream,dest:PrintWriter) {
-		println("dest debug")
-		val lexer = new BKOOLLexer(input)
-		val tokens = new CommonTokenStream(lexer)
-		val parser = new BKOOLParser(tokens)
-
-		val prog = parser.program
-		val astbuild = new BuildAST()
+  def test(infile:ANTLRFileStream,outfile:PrintWriter) = {
+    val lexer = new BKOOLLexer(infile);
+    val tokens = new CommonTokenStream(lexer);
+    val parser = new BKOOLParser(tokens);
+    val progtree = parser.program()
     
-		val ast = astbuild.visit(prog)
-    dest.print(ast)
+//    val astbuild = new BuildAST()
+//    val ast = astbuild.visit(progtree)
+//    outfile.println(ast)
     val bldecls = new BuildDeclaration()
-    val env = bldecls.visit(prog).asInstanceOf[List[(String,Kind)]]
-    val dup = findDuplicate(env,(x:(String,Kind)) => x._1)
-    dup match{
-      case Some((n,t)) => throw Redeclared(t,n)
-      case None => dest.println(env)
-    }
-    
-	}
-  def findDuplicate[T](lst:List[T], mapfunc:T=>String):Option[T] = lst match {
+    val env = bldecls.visit(progtree).asInstanceOf[List[(String,BKOOLType)]]
+    val dup = findDuplicate(env,(x:(String,BKOOLType)) => x._1)
+    dup match {
+      case Some((n,MethodType(p,r))) => throw RedeclareMethod(n,p,r)
+      case Some((n,t)) => throw RedeclareVariable(n,t)
+      case None => outfile.println(env)
+    }  
+    val tc = new TypeChecking(env)
+    tc.visit(progtree)  
+  }
+  def findDuplicate[T](lst:List[T],mapfunc:T=>String):Option[T] = lst match {
     case List() => None
-    case head::tail => findDuplicate(head, tail, mapfunc) match {
-      case None => findDuplicate(tail, mapfunc)
+    case head::tail => findDuplicate(head,tail,mapfunc) match {
+      case None => findDuplicate(tail,mapfunc)
       case Some(t) => Some(t)
     }
   }
-	def findDuplicate[T](head:T,rest:List[T],mapfunc:T=>String):Option[T] = rest match {
+  def findDuplicate[T](head:T,rest:List[T],mapfunc:T=>String):Option[T] = rest match {
     case List() => None
-    case h::t => if(mapfunc(head) == mapfunc(h)) Some(h) else findDuplicate(head, t, mapfunc)
-    
+    case h::t => if (mapfunc(head) == mapfunc(h)) Some(h) else findDuplicate(head,t,mapfunc)
   }
-	
+  //def getName(d:Declare) = d.getName
 }
 
 trait BKOOLType
 case object IntType extends BKOOLType
 case object FloatType extends BKOOLType
-case class MethodType (partype:List[Kind],retyype:Kind) extends BKOOLType
-case class JointType (typlst:List[Kind]) extends BKOOLType
-class BuildDeclaration extends BKOOLBaseVisitor[Object] { //
-  override def visitProgram(ctx:BKOOLParser.ProgramContext) =
-      ctx.classDeclaration().asScala.map(visit).toList.asInstanceOf[List[List[(String,Kind)]]].flatten
+case class ClassType(name:String)  extends BKOOLType
+case class MethodType(partype:List[BKOOLType],rettype:BKOOLType) extends BKOOLType
+case class JointType(typlst:List[BKOOLType]) extends BKOOLType
+
+/*trait Declare {def getName:String}
+case class VarDeclare(name:String,vartype:BKOOLType) extends Declare {
+  def getName = name
+}
+case class MethodDeclare(name:String,partype:List[BKOOLType],rettype:BKOOLType) extends Declare {
+  def getName = name
+}
+*/
+
+class BuildDeclaration extends BKOOLBaseVisitor[Object] {
   
-      
-  override def visitMethodDeclaration(ctx:BKOOLParser.MethodDeclarationContext) = {
-    val name = ctx.Identifier().getText
-    val partype = if(ctx.formalParameters() != null) visit(ctx.formalParameters()).asInstanceOf[List[Kind]] else List()
-    val rettype = visit(ctx.`type`()).asInstanceOf[Kind]
+  override def visitProgram(ctx:BKOOLParser.ProgramContext) = ctx.decl().asScala.map(visit).toList.asInstanceOf[List[List[(String,BKOOLType)]]].flatten
+  
+  override def visitDecl(ctx: BKOOLParser.DeclContext) = {
+	  val name = ctx.IDENTIFIER().getText
+    val typeclass = ctx.CLASS().getText
+    ClassType(name)
+  }
+  override def visitVar_dl(ctx:BKOOLParser.Var_dlContext) = visit(ctx.var_decl())
+  
+  override def visitVar_decl(ctx:BKOOLParser.Var_declContext) = {
+    val il = visit(ctx.idlist()).asInstanceOf[List[String]]
+    val vtype = visit(ctx.mctype()).asInstanceOf[BKOOLType]
+    il.map(x => (x,vtype))
+  }
+  
+  override def visitIdlist(ctx:BKOOLParser.IdlistContext) = ctx.IDENTIFIER().asScala.map(visit).toList
+  
+  override def visitFunc_decl(ctx: BKOOLParser.Func_declContext) = {
+    val name = ctx.IDENTIFIER().getText
+    val partype = if (ctx.parlist() != null) visit(ctx.parlist()).asInstanceOf[List[BKOOLType]] else List()
+    val rettype = visit(ctx.mctype()).asInstanceOf[BKOOLType]
     List((name,MethodType(partype,rettype)))
-  }   
-      
-  override def visitClassDeclaration(ctx:BKOOLParser.ClassDeclarationContext) = {
-    val name = ctx.Identifier().asScala.map(visit).toList.asInstanceOf[String]
-    name.map(x => x)   
   }
   
-  override def visitConstantDeclaration(ctx:BKOOLParser.ConstantDeclarationContext) = {
-    val name = ctx.Identifier().getText;
-    val typeConst = visit(ctx.`type`()).asInstanceOf[BKOOLType]
-    List((name, typeConst))
-  }
-  
-  override def visitLocalVariableDeclaration(ctx:BKOOLParser.LocalVariableDeclarationContext) = {
-    val il = visit(ctx.variableDeclarators()).asInstanceOf[List[String]]
-     val vtype = visit(ctx.`type`()).asInstanceOf[BKOOLType]
-    il.map(x => (x, vtype))
-  }
-  
-  override def visitPrimitiveType(ctx:BKOOLParser.PrimitiveTypeContext) =  ctx.getChild(0).getText match {
+  override def visitMctype(ctx: BKOOLParser.MctypeContext) = ctx.getChild(0).getText match {
     case "int" => IntType
     case "float" => FloatType
   }
   
-  override def visitFormalParameterList(ctx:BKOOLParser.FormalParameterListContext) =
-   ctx.formalParameter().asScala.map(visit).toList.asInstanceOf[List[List[(String,BKOOLType)]]].flatten
-    .map(_ match {  
+  override def visitParlist(ctx: BKOOLParser.ParlistContext) = 
+    ctx.var_decl()
+    .asScala
+    .map(visit)
+    .toList
+    .asInstanceOf[List[List[(String,BKOOLType)]]]
+    .flatten
+    .map(_ match {
       case (_,t) => t
     })
-  
+    
   override def visitTerminal(node:TerminalNode) = node.getText
-  
 }
+class TypeChecking(env:List[(String,BKOOLType)]) extends BKOOLBaseVisitor[Object] {
+  def lookup[T](name:String,lst:List[T],func:T=>String):Option[T] = lst match {
+    case List() => None
+    case head::tail => if (func(head) == name) Some(head) else lookup(name,tail,func)
+  }
+  def typecheck(pt:BKOOLType,at:BKOOLType):Boolean = pt == at
+  def typecheck(pt:List[BKOOLType],at:List[BKOOLType]):Boolean = 
+      if (pt.length != at.length) false 
+      else if (pt.length == 0) true 
+      else pt.zip(at).forall(x=>typecheck(x._1,x._2))
+  def typecheck(pt:JointType,at:List[BKOOLType]):Boolean = typecheck(pt.typlst,at)
 
+  override def visitCall(ctx: BKOOLParser.CallContext) = {
+    val id = ctx.IDENTIFIER.getText
+    val iddecl = lookup(id,env,(x:(String,BKOOLType)) => x._1)
+    if (iddecl == None) 
+        throw UndeclareIdentifier(id)
+    else {
+        val explst = ctx.explist()      
+        val at = if (explst != null) visit(explst).asInstanceOf[JointType].typlst else List()
+        
+        iddecl match {                   
+              case Some((_,MethodType(pt,rt))) => if (typecheck(pt,at)) rt else throw TypeMismatchInStatement(ctx.getText)            
+              case _ => throw TypeMismatchInStatement(ctx.getText)
+        }       
+    }
+  }
+  
+  override def visitExplist(ctx:BKOOLParser.ExplistContext) = JointType(ctx.exp().asScala.map(visit).toList.asInstanceOf[List[BKOOLType]])
+
+  override def visitExp(ctx:BKOOLParser.ExpContext) = 
+              ctx.moreterm().asScala.map(visit).toList.
+              asInstanceOf[List[(String,BKOOLType)]].
+              foldLeft(visit(ctx.term()).asInstanceOf[BKOOLType])((x,y)=> y match {
+                case (_,t) => if (typecheck(x,t)) t else throw TypeMismatchInExpression(ctx.getText)
+              })
+              
+  
+  override def visitMoreterm(ctx:BKOOLParser.MoretermContext) = (visit(ctx.getChild(0)),visit(ctx.getChild(1)))
+  
+  override def visitTerm(ctx:BKOOLParser.TermContext) = 
+              ctx.morefact().asScala.map(visit).toList.
+              asInstanceOf[List[(String,BKOOLType)]].
+              foldLeft(visit(ctx.fact()).asInstanceOf[BKOOLType])((x,y)=> y match {
+                case ("*",t) => if (typecheck(x,t)) t else throw TypeMismatchInExpression(ctx.getText)
+                case ("/",t) => if (typecheck(x,t)) FloatType else throw TypeMismatchInExpression(ctx.getText)
+              })
+              
+  
+  override def visitMorefact(ctx:BKOOLParser.MorefactContext) = (visit(ctx.getChild(0)),visit(ctx.getChild(1)))
+  
+  
+  override def visitFact(ctx: BKOOLParser.FactContext) = {
+    if (ctx.INTLIT() != null) IntType
+    else if (ctx.FLOATLIT() != null) FloatType
+         else if (ctx.IDENTIFIER() != null) {
+              val id = ctx.IDENTIFIER.getText
+              val iddecl = lookup(id,env,(x:(String,BKOOLType)) => x._1)
+              if (iddecl == None) 
+                throw UndeclareIdentifier(id)
+              else {
+                val explst = ctx.explist()      
+                if (ctx.LBRAC() != null) {
+                    val at = if (explst != null) visit(explst).asInstanceOf[JointType].typlst else List()
+                    iddecl match {                   
+                      case Some((_,MethodType(pt,rt))) => if (typecheck(pt,at)) rt else throw TypeMismatchInExpression(ctx.getText)
+                      case _ => throw TypeMismatchInExpression(ctx.getText)
+                    }
+                } else 
+                  iddecl match {
+                    case Some((_,IntType)) => IntType
+                    case Some((_,FloatType)) => FloatType
+                    case _ => throw TypeMismatchInExpression(ctx.getText)
+                  }
+             }
+         } else        
+          visit(ctx.exp())        
+    }       
+
+  override def visitTerminal(node:TerminalNode) = node.getText
+}
 trait AST
-case class ProgramAST(decl:List[DeclAST]) extends AST
+case class ProgramAST(decls:List[DeclAST]) extends AST
 trait BodyMember extends AST
 trait DeclAST
 trait Stmt extends BodyMember
-case class ClassDeclAST(name:String) extends DeclAST
-case class VarDeclAST(name:String, vtype:BKOOLType) extends DeclAST with BodyMember
-case class ParDeclAST(name:String, vtype:BKOOLType) extends DeclAST
-case class ConstDeclAST(name:String, vtype:BKOOLType) extends DeclAST
+case class VarDeclAST(name:String,vtype:BKOOLType) extends DeclAST with BodyMember
+case class ParDeclAST(name:String,vtype:BKOOLType) extends DeclAST
 case class ManyVarDeclAST(vardecls:List[VarDeclAST]) extends DeclAST
-case class MethodDeclAST(name:String, partype:List[ParDeclAST], rettype:BKOOLType, body:List[BodyMember]) extends DeclAST
-case class ConstructorDeclAST(name:String, partype:List[ParDeclAST], body:List[BodyMember]) extends DeclAST
-case class AssignAST(lsh:String, rhs:ExpAST) extends Stmt
+case class MethodDeclAST(name:String,partype:List[ParDeclAST],rettype:BKOOLType,body:List[BodyMember]) extends DeclAST
+
+case class AssignAST(lhs:String,rhs:ExpAST) extends Stmt
+case class CallStmtAST(name:String,args:List[ExpAST]) extends Stmt
 
 trait ExpAST extends AST
-case class BinaryAST(left:ExpAST, op:String, right:ExpAST) extends ExpAST
+case class BinaryAST(left:ExpAST,op:String,right:ExpAST) extends ExpAST
 case class IntAST(value:Integer) extends ExpAST
 case class FloatAST(value:Float) extends ExpAST
+case class CallExpAST(name:String,args:List[ExpAST]) extends ExpAST
 case class IdAST(name:String) extends ExpAST
-case class ConstantDeclAST(name:String, consttype:BKOOLType, expr:ExpAST)
 
 class BuildAST extends BKOOLBaseVisitor[Object] {
   def flatten(arg:List[DeclAST]):List[DeclAST] = arg match {
@@ -127,33 +214,94 @@ class BuildAST extends BKOOLBaseVisitor[Object] {
     case ManyVarDeclAST(l)::tail => l ++ flatten(tail)
     case h::tail => h :: flatten(tail)
   }
-  override def visitProgram(ctx:BKOOLParser.ProgramContext) = ProgramAST(flatten(ctx.classDeclaration().asScala.map(visit).toList.asInstanceOf[List[DeclAST]]))
-  override def visitClassDeclaration(ctx:BKOOLParser.ClassDeclarationContext) = ClassDeclAST(ctx.Identifier().asScala.map(visit).toList.asInstanceOf[String])
-  override def visitMemberDeclartion(ctx:BKOOLParser.MemberDeclartionContext) = visit(ctx.getChild(0))
-  override def visitMethodDeclaration(ctx:BKOOLParser.MethodDeclarationContext) = {
-    val name = ctx.Identifier().asInstanceOf[String]
-    val partype = if(ctx.formalParameters() != null) visit(ctx.formalParameters()).asInstanceOf[List[ParDeclAST]] else List()
-    val rettype = visit(ctx.`type`()).asInstanceOf[BKOOLType]
-    val body = visit(ctx.methodBody()).asInstanceOf[List[BodyMember]]
-    MethodDeclAST(name, partype, rettype, body)
+  override def visitProgram(ctx:BKOOLParser.ProgramContext) = ProgramAST(flatten(ctx.decl().asScala.map(visit).toList.asInstanceOf[List[DeclAST]]))
+  
+  override def visitDecl(ctx: BKOOLParser.DeclContext) = visit(ctx.getChild(0))    //if (ctx.var_dl() != null) visit(ctx.var_dl()) else visit(ctx.func_decl())
+  
+  override def visitVar_dl(ctx:BKOOLParser.Var_dlContext) = visit(ctx.var_decl())
+  
+  override def visitVar_decl(ctx:BKOOLParser.Var_declContext) = {
+    val il = visit(ctx.idlist()).asInstanceOf[List[String]]
+    val vtype = visit(ctx.mctype()).asInstanceOf[BKOOLType]
+    if (il.length == 1) VarDeclAST(il(0),vtype) else ManyVarDeclAST(il.map(x => VarDeclAST(x,vtype)))
   }
-  override def visitLocalVariableDeclarationStatement(ctx:BKOOLParser.LocalVariableDeclarationStatementContext) = {
-    visit(ctx.getChild(0))
+  
+  override def visitIdlist(ctx:BKOOLParser.IdlistContext) = ctx.IDENTIFIER().asScala.map(visit).toList
+  
+  override def visitFunc_decl(ctx: BKOOLParser.Func_declContext) = {
+    val name = ctx.IDENTIFIER().getText
+    val partype = if (ctx.parlist() != null) visit(ctx.parlist()).asInstanceOf[List[ParDeclAST]] else List()
+    val rettype = visit(ctx.mctype()).asInstanceOf[BKOOLType]
+    val body = visit(ctx.body()).asInstanceOf[List[BodyMember]]
+    MethodDeclAST(name,partype,rettype,body)
   }
-  override def visitConstantDeclarationStatement(ctx:BKOOLParser.ConstantDeclarationStatementContext) =
-    visit(ctx.getChild(0))
-  override def visitConstructorDeclaration(ctx:BKOOLParser.ConstructorDeclarationContext) = {
-    val name = ctx.Identifier().asInstanceOf[String]
-    val partype = if(ctx.formalParameters() != null) visit(ctx.formalParameters()).asInstanceOf[List[ParDeclAST]] else List()
-    val body = visit(ctx.constructorBody()).asInstanceOf[List[BodyMember]]
-    ConstructorDeclAST(name, partype, body)
+  
+  override def visitMctype(ctx: BKOOLParser.MctypeContext) = ctx.getChild(0).getText match {
+    case "int" => IntType
+    case "float" => FloatType
   }
-  override def visitConstantDeclaration(ctx:BKOOLParser.ConstantDeclarationContext) = {
-    val name = ctx.Identifier().asInstanceOf[String]
-    val consttype = ctx.`type`().asInstanceOf[BKOOLType]
-    val expr = ctx.expression().asInstanceOf[ExpAST]
-    ConstantDeclAST(name, consttype, expr)
+  def var2par(lst:List[DeclAST]):List[ParDeclAST] = lst match {
+    case List() => List()
+    case VarDeclAST(n,t)::tail => ParDeclAST(n,t)::var2par(tail)
+    case ManyVarDeclAST(l)::tail => var2par(l) ++ var2par(tail)
+  }
+  override def visitParlist(ctx: BKOOLParser.ParlistContext) = 
+    var2par(ctx.var_decl().asScala.map(visit).toList.asInstanceOf[List[DeclAST]])
+
+  override def visitBody(ctx:BKOOLParser.BodyContext) = ctx.mem().asScala.map(visit).toList
+  
+  //override def visitMem(ctx:BKOOLParser.MemContext) = visit(ctx.getChild(0))//if (ctx.decl() != null) visit(ctx.var_dl()) else visit(ctx.stmt())
+  
+  //override def visitStmt(ctx:BKOOLParser.StmtContext) = visit(ctx.getChild(0))//if (ctx.assign() != null) visit(ctx.assign()) else visit(ctx.call())
+  
+  override def visitAssign(ctx:BKOOLParser.AssignContext) = {
+    val id = ctx.IDENTIFIER().getText
+    val exp = visit(ctx.exp()).asInstanceOf[ExpAST]
+    AssignAST(id,exp)
+  }
+  override def visitCall(ctx:BKOOLParser.CallContext) = {
+    val id = ctx.IDENTIFIER().getText
+    val args = if (ctx.explist() != null) visit(ctx.explist()).asInstanceOf[List[ExpAST]] else List()
+    CallStmtAST(id,args)
+  } 
+  
+  override def visitExplist(ctx:BKOOLParser.ExplistContext) = ctx.exp().asScala.map(visit).toList
+  
+  override def visitExp(ctx:BKOOLParser.ExpContext) = {
+    val first = visit(ctx.term()).asInstanceOf[ExpAST]
+    val lst = ctx.moreterm().asScala.map(visit).toList.asInstanceOf[List[(String,ExpAST)]]
+    lst.foldLeft(first)((x,y) => y match {case (a,b) => BinaryAST(x,a,b)} )
+  }
+  
+  override def visitMoreterm(ctx:BKOOLParser.MoretermContext) = {
+    val op = visit(ctx.getChild(0))
+    val exp = visit(ctx.term()).asInstanceOf[ExpAST]
+    (op,exp)
+  }
+  override def visitTerm(ctx:BKOOLParser.TermContext) = {
+    val first = visit(ctx.fact()).asInstanceOf[ExpAST]
+    val lst = ctx.morefact().asScala.map(visit).toList.asInstanceOf[List[(String,ExpAST)]]
+    lst.foldLeft(first)((x,y) => y match {case (a,b) => BinaryAST(x,a,b)} )
+  }
+  
+  override def visitMorefact(ctx:BKOOLParser.MorefactContext) = {
+    val op = visit(ctx.getChild(0))
+    val exp = visit(ctx.fact()).asInstanceOf[ExpAST]
+    (op,exp)
+  }  
+  
+  override def visitFact(ctx:BKOOLParser.FactContext) = {
+    if (ctx.IDENTIFIER() != null) {
+      val id = ctx.IDENTIFIER().getText
+      if (ctx.LBRAC() != null) {
+        val args =if (ctx.explist() != null) visit(ctx.explist()).asInstanceOf[List[ExpAST]] else List()
+        CallExpAST(id,args)
+      } else IdAST(id)
+    } else if (ctx.INTLIT() != null) IntAST(ctx.INTLIT().getText.toInt) 
+           else if (ctx.FLOATLIT() != null) FloatAST(ctx.FLOATLIT().getText.toFloat)
+                else visit(ctx.exp())
   }
   override def visitTerminal(node:TerminalNode) = node.getText
-  
+
 }
+  
