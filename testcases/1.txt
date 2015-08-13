@@ -1,2 +1,8 @@
-class a {}
+class a {
+b:integer;
+final integer c = d;
+a() {
+d,d:integer;}
+}
+
 
