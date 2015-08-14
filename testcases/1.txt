@@ -1,8 +1,11 @@
 class a {
 b:integer;
-final integer c = d;
+final integer c = b;
 a() {
-d,d:integer;}
+c,c:integer;}
 }
 
+class c {
+a,a:integer;
+}
 

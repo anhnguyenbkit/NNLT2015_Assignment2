@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree._
 import scala.collection.JavaConverters._
-import bkool.parser.BKOOLParser.ArrayTypeContext
+//import bkool.parser.BKOOLParser.ArrayTypeContext
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream,ParserRuleContext}
 import org.antlr.v4.runtime.tree.{ParseTreeWalker,TerminalNode,ErrorNode,ParseTree};
 object TestChecker {
@@ -20,9 +20,9 @@ object TestChecker {
     val tokens = new CommonTokenStream(lexer)
     val parser = new BKOOLParser(tokens)
     val progtree = parser.program()
+    val listBodyclass = progtree.class_decl()
     val body = progtree.class_decl(0).class_body()
-    val medthodbody = body.member_decl(0).getChild(0).asInstanceOf[List[(String,Kind)]] 
-    methodbody.map
+    val medthodbody = body.member_decl(2)
     val astbuild = new BuildAST()
     val ast = astbuild.visit(body)
     dest.println(ast)
@@ -31,27 +31,51 @@ object TestChecker {
     val dup = findDuplicate(env,(x:(String,Kind)) => x._1)
     dup match {
       case Some((n,t)) => println("duplicate class")
-      case None => dest.println(env)
+      case None => findDupMethod(bldecls.visit(body).asInstanceOf[List[(String,Kind)]])
     } 
-    
+    def findDupMethod(x:List[(String,Kind)]){
+      val attmthdup = findDuplicate(x,(x:(String,Kind)) => x._1)
+      if (attmthdup != None)
+      {
+        println("duplicate in method")
+      } 
+    }
     val bodydecls = new BuildDeclaration()
     val bodytree = bodydecls.visit(body).asInstanceOf[List[(String,Kind)]]
-    val dup2 = findDuplicate(bodytree,(y:(String,Kind)) => y._1)
-    dup2 match {
-      case Some((n,t)) => println("duplicate decl in class")
-      case None => dest.println(bodytree)
-    }  
+    for(i<-0 to (listBodyclass.size - 1)) 
+      findDupMethod(bldecls.visit(progtree.class_decl(i).class_body()).asInstanceOf[List[(String,Kind)]])
+//    val dup2 = findDuplicate(bodytree,(y:(String,Kind)) => y._1)
+//    dup2 match {
+//      case Some((n,t)) => println("duplicate decl in class")
+//      case None => dest.println(bodytree)
+//    }  
     
-    val methoddecls = new BuildDeclaration()
-    val methodtree = methoddecls.visit(medthodbody).asInstanceOf[List[(String,Kind)]]
-    val dup3 = findDuplicate(methodtree,(z:(String,Kind)) => z._1)
-    dup3 match {
-      case Some((n,t)) => println("duplicate decl in method")
-      case None => dest.println(bodytree)
-    }
+//    val methoddecls = new BuildDeclaration()
+//    val methodtree = methoddecls.visit(medthodbody).asInstanceOf[List[(String,Kind)]]
+//    val dup3 = bodytree find {x => x._2 == Method}
+//    dup3 match {
+//      case Some((x,Method)) =>  find_in_method(medthodbody)
+//    }
+//    def find_in_method(x:BKOOLParser.Member_declContext) {
+//      println("debug here")
+//      val tbuild = new BuildDeclaration()
+//      val ttree = tbuild.visit(x).asInstanceOf[List[(String,Kind)]]
+//       val dup4 = findDuplicate(ttree,(y:(String,Kind)) => y._1)
+//      dup4 match {
+//        case Some((n,t)) => println("duplicate decl in class")
+//        case None => dest.println(ttree)
+//      }
+//    }
+//    println(dup3)
     
-//    val tc = new TypeChecking(env)
-//    tc.visit(progtree)  
+//    val dup4 = findDuplicate(dup3,(y:(String,Kind)) => y._1)
+//    dup4 match {
+//      case Some((n,t)) => println("duplicate decl in class")
+//      case None => dest.println(bodytree)
+//    }
+//    val env1 = bldecls.visit(progtree).asInstanceOf[List[(String,Kind)]]
+    val tc = new TypeChecking(bodytree)
+    tc.visit(body)  
   }
   def findDuplicate[T](lst:List[T],mapfunc:T=>String):Option[T] = lst match {
     case List() => None
@@ -67,18 +91,18 @@ object TestChecker {
   //def getName(d:Declare) = d.getName
 }
 
-trait BKOOLType
-case object IntType extends BKOOLType
-case object FloatType extends BKOOLType
-case object ClassType extends BKOOLType
-case class MethodType(partype:List[BKOOLType],rettype:BKOOLType) extends BKOOLType
-case class JointType(typlst:List[BKOOLType]) extends BKOOLType
-case class ConstructorType(partype:List[BKOOLType]) extends BKOOLType
+//trait Kind
+case object IntType extends Kind
+case object FloatType extends Kind
+case object ClassType extends Kind
+case class MethodType(partype:List[Kind],rettype:Kind) extends Kind
+case class JointType(typlst:List[Kind]) extends Kind
+case class ConstructorType(partype:List[Kind]) extends Kind
 /*trait Declare {def getName:String}
-case class VarDeclare(name:String,vartype:BKOOLType) extends Declare {
+case class VarDeclare(name:String,vartype:Kind) extends Declare {
   def getName = name
 }
-case class MethodDeclare(name:String,partype:List[BKOOLType],rettype:BKOOLType) extends Declare {
+case class MethodDeclare(name:String,partype:List[Kind],rettype:Kind) extends Declare {
   def getName = name
 }
 */
@@ -93,6 +117,8 @@ class BuildDeclaration extends BKOOLBaseVisitor[Object] {
   }
   
   override def visitClass_body(ctx:BKOOLParser.Class_bodyContext) = ctx.member_decl().asScala.map(visit).toList.asInstanceOf[List[List[(String,Kind)]]].flatten
+  
+  override def visitMember_decl(ctx:BKOOLParser.Member_declContext) = visit(ctx.getChild(0))
   
   override def visitBody(ctx:BKOOLParser.BodyContext) = ctx.mem().asScala.map(visit).toList.asInstanceOf[List[List[(String,Kind)]]].flatten
   
@@ -135,7 +161,7 @@ class BuildDeclaration extends BKOOLBaseVisitor[Object] {
     .asScala
     .map(visit)
     .toList
-    .asInstanceOf[List[List[(String,BKOOLType)]]]
+    .asInstanceOf[List[List[(String,Kind)]]]
     .flatten
     .map(_ match {
       case (_,t) => t
@@ -143,23 +169,26 @@ class BuildDeclaration extends BKOOLBaseVisitor[Object] {
     
   override def visitTerminal(node:TerminalNode) = node.getText
 }
-class TypeChecking(env:List[(String,BKOOLType)]) extends BKOOLBaseVisitor[Object] {  
+class TypeChecking(env:List[(String,Kind)]) extends BKOOLBaseVisitor[Object] {  
   def lookup[T](name:String,lst:List[T],func:T=>String):Option[T] = lst match {
     case List() => None
     case head::tail => if (func(head) == name) Some(head) else lookup(name,tail,func)
   }
-  def typecheck(pt:BKOOLType,at:BKOOLType):Boolean = pt == at
-  def typecheck(pt:List[BKOOLType],at:List[BKOOLType]):Boolean = 
+  def typecheck(pt:Kind,at:Kind):Boolean = pt == at
+  def typecheck(pt:List[Kind],at:List[Kind]):Boolean = 
       if (pt.length != at.length) false 
       else if (pt.length == 0) true 
       else pt.zip(at).forall(x=>typecheck(x._1,x._2))
-  def typecheck(pt:JointType,at:List[BKOOLType]):Boolean = typecheck(pt.typlst,at)
+  def typecheck(pt:JointType,at:List[Kind]):Boolean = typecheck(pt.typlst,at)
 
   override def visitCall(ctx: BKOOLParser.CallContext) = {
     val id = ctx.IDENTIFIER.getText
-    val iddecl = lookup(id,env,(x:(String,BKOOLType)) => x._1)
-    if (iddecl == None) 
-        throw UndeclareIdentifier(id)
+    val iddecl = lookup(id,env,(x:(String,Kind)) => x._1)
+    if (iddecl == None) {
+      println("call")
+      throw UndeclareIdentifier(id)
+    }
+        
     else {
         val explst = ctx.explist()      
         val at = if (explst != null) visit(explst).asInstanceOf[JointType].typlst else List()
@@ -171,12 +200,12 @@ class TypeChecking(env:List[(String,BKOOLType)]) extends BKOOLBaseVisitor[Object
     }
   }
   
-  override def visitExplist(ctx:BKOOLParser.ExplistContext) = JointType(ctx.exp().asScala.map(visit).toList.asInstanceOf[List[BKOOLType]])
+  override def visitExplist(ctx:BKOOLParser.ExplistContext) = JointType(ctx.exp().asScala.map(visit).toList.asInstanceOf[List[Kind]])
 
   override def visitExp(ctx:BKOOLParser.ExpContext) = 
               ctx.moreterm().asScala.map(visit).toList.
-              asInstanceOf[List[(String,BKOOLType)]].
-              foldLeft(visit(ctx.term()).asInstanceOf[BKOOLType])((x,y)=> y match {
+              asInstanceOf[List[(String,Kind)]].
+              foldLeft(visit(ctx.term()).asInstanceOf[Kind])((x,y)=> y match {
                 case (_,t) => if (typecheck(x,t)) t else throw TypeMismatchInExpression(ctx.getText)
               })
               
@@ -185,8 +214,8 @@ class TypeChecking(env:List[(String,BKOOLType)]) extends BKOOLBaseVisitor[Object
   
   override def visitTerm(ctx:BKOOLParser.TermContext) = 
               ctx.morefact().asScala.map(visit).toList.
-              asInstanceOf[List[(String,BKOOLType)]].
-              foldLeft(visit(ctx.fact()).asInstanceOf[BKOOLType])((x,y)=> y match {
+              asInstanceOf[List[(String,Kind)]].
+              foldLeft(visit(ctx.fact()).asInstanceOf[Kind])((x,y)=> y match {
                 case ("*",t) => if (typecheck(x,t)) t else throw TypeMismatchInExpression(ctx.getText)
                 case ("/",t) => if (typecheck(x,t)) FloatType else throw TypeMismatchInExpression(ctx.getText)
               })
@@ -200,9 +229,13 @@ class TypeChecking(env:List[(String,BKOOLType)]) extends BKOOLBaseVisitor[Object
     else if (ctx.FLOATLIT() != null) FloatType
          else if (ctx.IDENTIFIER() != null) {
               val id = ctx.IDENTIFIER.getText
-              val iddecl = lookup(id,env,(x:(String,BKOOLType)) => x._1)
-              if (iddecl == None) 
-                throw UndeclareIdentifier(id)
+//              println(env)
+              val iddecl = lookup(id,env,(x:(String,Kind)) => x._1)
+              if (iddecl == None) {
+                println("fact")
+                 throw UndeclareIdentifier(id)
+              }
+               
               else {
                 val explst = ctx.explist()      
                 if (ctx.LBRAC() != null) {
@@ -229,15 +262,15 @@ case class ProgramAST(decls:List[DeclAST]) extends AST
 trait BodyMember extends AST
 trait DeclAST
 trait Stmt extends BodyMember
-case class VarDeclAST(name:String,vtype:BKOOLType) extends DeclAST with BodyMember
-case class ParDeclAST(name:String,vtype:BKOOLType) extends DeclAST
+case class VarDeclAST(name:String,vtype:Kind) extends DeclAST with BodyMember
+case class ParDeclAST(name:String,vtype:Kind) extends DeclAST
 case class ManyVarDeclAST(vardecls:List[VarDeclAST]) extends DeclAST
-case class MethodDeclAST(name:String,partype:List[ParDeclAST],rettype:BKOOLType,body:List[BodyMember]) extends DeclAST
+case class MethodDeclAST(name:String,partype:List[ParDeclAST],rettype:Kind,body:List[BodyMember]) extends DeclAST
 case class ConstructorDeclAST(name:String,partype:List[ParDeclAST],body:List[BodyMember]) extends DeclAST
 case class ClassDeclAST(name:String,body:List[BodyMember]) extends DeclAST
 case class AssignAST(lhs:String,rhs:ExpAST) extends Stmt
 case class CallStmtAST(name:String,args:List[ExpAST]) extends Stmt
-case class ConstDeclAST(name:String, ctype:BKOOLType)
+case class ConstDeclAST(name:String, ctype:Kind)
 trait ExpAST extends AST
 case class BinaryAST(left:ExpAST,op:String,right:ExpAST) extends ExpAST
 case class IntAST(value:Integer) extends ExpAST
@@ -268,7 +301,7 @@ class BuildAST extends BKOOLBaseVisitor[Object] {
   
   override def visitVar_decl(ctx:BKOOLParser.Var_declContext) = {
     val il = visit(ctx.idlist()).asInstanceOf[List[String]]
-    val vtype = visit(ctx.bkoolType()).asInstanceOf[BKOOLType]
+    val vtype = visit(ctx.bkoolType()).asInstanceOf[Kind]
     if (il.length == 1) VarDeclAST(il(0),vtype) else ManyVarDeclAST(il.map(x => VarDeclAST(x,vtype)))
   }
   
@@ -276,7 +309,7 @@ class BuildAST extends BKOOLBaseVisitor[Object] {
   
   override def visitConst_decl(ctx:BKOOLParser.Const_declContext) = {
     val name = ctx.IDENTIFIER().getText
-    val ctype = visit(ctx.bkoolType()).asInstanceOf[BKOOLType]
+    val ctype = visit(ctx.bkoolType()).asInstanceOf[Kind]
     ConstDeclAST(name,ctype)
   }
   
@@ -285,7 +318,7 @@ class BuildAST extends BKOOLBaseVisitor[Object] {
   override def visitFunc_decl(ctx: BKOOLParser.Func_declContext) = {
     val name = ctx.IDENTIFIER().getText
     val partype = if (ctx.parlist() != null) visit(ctx.parlist()).asInstanceOf[List[ParDeclAST]] else List()
-    val rettype = visit(ctx.bkoolType()).asInstanceOf[BKOOLType]
+    val rettype = visit(ctx.bkoolType()).asInstanceOf[Kind]
     val body = visit(ctx.body()).asInstanceOf[List[BodyMember]]
     MethodDeclAST(name,partype,rettype,body)
   }
