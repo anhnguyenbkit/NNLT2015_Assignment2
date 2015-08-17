@@ -20,9 +20,10 @@ case class Undeclared(k:Kind,n:String) extends Exception
 case class CannotAssignToConstant(s:String) extends Exception
 case class TypeMismatchInStatement(stmt:String) extends Exception
 case class TypeMismatchInExpression(exp:String) extends Exception
-case class RedeclareVariable(name:String,vartype:Kind) extends Exception
-case class RedeclareMethod(name:String,partype:List[Kind],rettype:Kind) extends Exception
-case class UndeclareIdentifier(name:String) extends Exception
+case class RedeclareMethod(name:String,vartype:Kind) extends Exception
+case class RedeclareClass(name:String,vartype:Kind) extends Exception
+//case class RedeclareMethod(name:String,partype:List[Kind],rettype:Kind) extends Exception
+
 //case class CannotAccessPrivateAttribute(cName:String, attr:String) extends Exception
 //case class NoPrototype(mName:String) extends Exception
 //case class NoImplementation(mName:String) extends Exception

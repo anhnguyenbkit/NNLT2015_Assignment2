@@ -3,14 +3,14 @@
 /**
  * @author nhphung
  */
-package bkool
 
+package bkool
+//import bkool.parser
 import scala.io.Source
 import java.io.{PrintWriter,File}
 import java.util.concurrent.{Executors,TimeUnit,TimeoutException}
 import org.antlr.v4.runtime.ANTLRFileStream
-import bkool.checker._
-import bkool.parser._
+
 
 trait Timed {
   def timeoutAfter(timeout: Long)(codeToTest: => Unit): Unit = {
@@ -28,7 +28,7 @@ trait Timed {
   }
 }
 
-object Main extends  Timed {
+object Main extends Timed{
 
   def main(args: Array[String]): Unit = {
     if (args.length == 5) {
@@ -55,7 +55,19 @@ object Main extends  Timed {
         case "testchecker" => (new ANTLRFileStream(s"$indir$sepa$i.txt"),new PrintWriter(new File(s"$outdir$sepa$i.txt")),None)
         case _ => throw new ClassCastException
       }
+      //val outputFile = outdir+"//"+i+".txt" //dung trong linux
+      //val source = Source.fromFile(inputFile)
+       //dung trong linux, dest la cac file tam 1.txt, 2.txt
+      //val lines = source.getLines
+      //val input = if (!lines.isEmpty) lines.reduceLeft[String](_ + '\n' + _) else ""
+      //val source = new ANTLRFileStream(inputFile)
+      //val dest = new PrintWriter(new File(outputFile ))
       
+      /*val parser:Any = option match {
+        case "testrecogniser" => TestLexer.test(inputFile,)
+        case "testlexer" => new BKOOLLexer
+        
+      }*/
       
       try 
       {
@@ -63,30 +75,32 @@ object Main extends  Timed {
         {
             option match {
               
-              case "testrecogniser" => TestParser.test(source,dest)
-              case "testlexer" => TestLexer.test(source,dest)
+              case "testrecogniser" => parser.TestParser.test(source,dest)
+              case "testlexer" => parser.TestLexer.test(source,dest)
               case "testassignment1" => {
-                TestLexer.test(source,dest)
-                TestParser.test(source,altdest.get)
+                val source2 = new ANTLRFileStream(s"$indir$sepa$i.txt");
+                parser.TestLexer.test(source,dest)
+                parser.TestParser.test(source2,altdest.get)
               }
-              case "testchecker" => try {
-                 TestChecker.test(source,dest)
-              } catch {
-                case RedeclareVariable(n,t) => dest.println("Redeclare Variable "+ n)
-                case RedeclareMethod(n,p,r) => dest.println("Redeclare Method "+ n)
-                case UndeclareIdentifier(name) => dest.println("Undeclare Identifier "+name)
-                case TypeMismatchInExpression(exp) => dest.println("Type Mismatch In Expression "+exp)
-                case TypeMismatchInStatement(stmt) => dest.println("Type Mismatch In Statement "+stmt)
-              }
-                
+              case "testchecker" => 
+                try {
+                checker.TestChecker.test(source,dest)
+                }
+                catch{
+                  case checker.Redeclared(k, d) => dest.println("Redeclared " + k + ": " + d)
+                  case checker.Undeclared(k, n) => dest.println("Undeclared " + k + ": " + n)
+                  case checker.CannotAssignToConstant(s) => dest.println("Cannot Assign To Constant: " + s)
+                  case checker.TypeMismatchInStatement(s) => dest.println("Type Mismatch In Statement: " + s)
+                  case checker.TypeMismatchInExpression(e) => dest.println("Type Mismatch In Expression: " + e)
+                  case e : Exception => dest.println(e)
+                }
               case _ => throw new ClassCastException
           }
         }
       } 
       catch 
       {
-        case te: TimeoutException => dest.println("Test runs timeout")
-        //case e : Exception => dest.println(e)
+         case te: TimeoutException => dest.println("Test runs timeout")
       } 
       finally 
       {

@@ -1,11 +1,11 @@
 class a {
 b:integer;
 final integer c = b;
+final integer c = b;
 a() {
-c,c:integer;}
-}
+final integer e = f;
+c:integer;}
 
-class c {
-a,a:integer;
+a() {}
 }
 
